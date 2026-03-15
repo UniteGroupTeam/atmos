@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atmos</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#00FFE5">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>// ATMOS_SYS</h1>
+            <p class="status">INICIALIZANDO...</p>
+        </header>
+
+        <main>
+            <section class="aqi-section">
+                <h2>[ ÍNDICE DE CALIDAD DEL AIRE ]</h2>
+                <div class="aqi-display">
+                    <svg class="progress-ring" width="200" height="200">
+                        <circle class="progress-ring__circle_bg" stroke="rgba(0, 255, 229, 0.1)" stroke-width="10" fill="transparent" r="90" cx="100" cy="100"/>
+                        <circle class="progress-ring__circle" stroke="#00FFE5" stroke-width="10" stroke-linecap="round" fill="transparent" r="90" cx="100" cy="100"/>
+                    </svg>
+                    <div class="aqi-value-container">
+                        <span id="aqi-value">--</span>
+                        <span id="aqi-label">US AQI</span>
+                    </div>
+                </div>
+                <p id="aqi-description" class="sub-text">Buscando señal...</p>
+            </section>
+
+            <section class="water-section">
+                <h2>[ RIESGO CORTE DE AGUA ]</h2>
+                <div class="water-data">
+                    <div class="glitch-wrapper">
+                        <span id="water-risk" class="glitch" data-text="--">--</span>
+                    </div>
+                    <p id="rain-probability">Prob. media lluvia 7 días: --%</p>
+                </div>
+            </section>
+
+            <button id="btn-report" class="cyber-btn">
+                <span class="btn-text">REPORTAR FUGA</span>
+            </button>
+        </main>
+        
+        <footer>
+            <p>CONECTADO A OPEN-METEO API</p>
+        </footer>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
