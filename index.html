@@ -13,6 +13,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCCXPPS3LM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MCCXPPS3LM');
+    </script>
 </head>
 <body>
     <div class="app-container">
@@ -22,9 +32,14 @@
                 <span class="material-symbols-rounded" style="color:var(--primary)">location_on</span>
                 <h1 id="location-name">Buscando...</h1>
             </div>
-            <button id="refresh-btn" class="icon-btn" aria-label="Actualizar">
-                <span class="material-symbols-rounded">refresh</span>
-            </button>
+            <div style="display: flex; gap: 0.5rem;">
+                <button id="install-btn-top" class="icon-btn" aria-label="Instalar App" style="display: none; color: var(--primary);">
+                    <span class="material-symbols-rounded">download</span>
+                </button>
+                <button id="refresh-btn" class="icon-btn" aria-label="Actualizar">
+                    <span class="material-symbols-rounded">refresh</span>
+                </button>
+            </div>
         </header>
 
         <main class="content-scroll">
@@ -36,14 +51,36 @@
                         <span id="current-temp">--</span><span class="unit">°C</span>
                     </div>
                 </div>
-                <h2 id="weather-desc">Cargando la magia...</h2>
-                <p id="weather-joke" class="weather-joke">Alistando los sensores divertidos...</p>
+                <div class="day-night-badge" id="day-night-status">Calculando...</div>
+                <h2 id="weather-desc">Cargando...</h2>
+                <p id="weather-joke" class="weather-joke">Alistando sensores...</p>
+                <div class="weather-details-row">
+                    <div class="detail-item">
+                        <span class="material-symbols-rounded">wb_sunny</span>
+                        <div class="detail-col">
+                            <small>Amanecer</small>
+                            <span id="sunrise-time">--:--</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="material-symbols-rounded">wb_twilight</span>
+                        <div class="detail-col">
+                            <small>Atardecer</small>
+                            <span id="sunset-time">--:--</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="high-low">
                     <span>Mín: <span id="temp-min">--</span>°</span>
                     <span class="dot-separator">•</span>
                     <span>Máx: <span id="temp-max">--</span>°</span>
                 </div>
             </section>
+
+            <!-- Desktop Install Button -->
+            <button id="desktop-qr-btn" class="btn-secondary desktop-only-btn">
+                <span class="material-symbols-rounded">qr_code_scanner</span> Instalar en teléfonos
+            </button>
 
             <!-- Cards Container -->
             <div class="cards-grid">
@@ -99,10 +136,32 @@
                         </div>
                     </div>
                 </article>
+
+                <!-- Weekly Forecast Card -->
+                <article class="card forecast-card">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <span class="material-symbols-rounded" style="color: var(--primary)">calendar_month</span>
+                            <h3>Pronóstico Semanal</h3>
+                        </div>
+                    </div>
+                    <div class="forecast-list" id="forecast-list">
+                        <div class="loading-container">
+                            <div class="radar-spinner"></div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; padding-top: 1rem;">
+                        <button id="btn-symbols-index" class="icon-btn" style="width: auto; padding: 0.5rem 1rem; border-radius: var(--radius-sm); border: 2px solid var(--surface-variant); display: inline-flex; gap: 0.5rem; justify-content: center; align-items: center;">
+                            <span class="material-symbols-rounded" style="color: var(--primary)">info</span> ¿Qué son estos símbolos?
+                        </button>
+                    </div>
+                </article>
             </div>
 
             <footer class="app-footer">
-                <img src="https://imgur.com/dC5H3Z2.png" alt="Bottle Code Logo" class="brand-logo">
+                <a href="https://bottle-code-rodricg30-shop.fourthwall.com/en-mxn" target="_blank" rel="noopener noreferrer">
+                    <img src="https://imgur.com/dC5H3Z2.png" alt="Bottle Code Logo" class="brand-logo">
+                </a>
                 <p>Desarrollado con ♥ por <b>Bottle Code</b></p>
                 <p class="subtitle_footer">Empresa 100% Mexicana 🇲🇽</p>
             </footer>
@@ -144,7 +203,27 @@
                 <h2>Reportar Nueva Fuga</h2>
             </div>
             <div class="modal-body">
-                <p class="subtitle mb-2">La app tomará tu ubicación actual de forma automática.</p>
+                <p class="subtitle mb-2">Ingresa los datos exactos del domicilio donde se encuentra el problema.</p>
+                <div style="display: flex; gap: 0.5rem; width: 100%;">
+                    <div class="input-group" style="flex: 2;">
+                        <label>Calle:</label>
+                        <input type="text" id="fuga-calle" placeholder="Nombre de la calle" required>
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>Núm:</label>
+                        <input type="text" id="fuga-numero" placeholder="# Ext/Int" required>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; width: 100%;">
+                    <div class="input-group" style="flex: 1;">
+                        <label>Delegación/Municipio:</label>
+                        <input type="text" id="fuga-delegacion" placeholder="Ej. Cuauhtémoc" required>
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>C.P.:</label>
+                        <input type="text" id="fuga-cp" placeholder="00000" inputmode="numeric">
+                    </div>
+                </div>
                 <div class="input-group">
                     <label>Descripción de la fuga:</label>
                     <textarea id="fuga-desc" placeholder="Ej. Un tubo roto en la esquina..." rows="3"></textarea>
@@ -200,6 +279,69 @@
                 </ul>
             </div>
             <button class="close-modal-btn icon-btn"><span class="material-symbols-rounded">close</span></button>
+        </div>
+    </div>
+
+    <!-- Joke Modal -->
+    <div id="modal-joke" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span id="joke-icon" class="material-symbols-rounded modal-icon pink-icon">mood</span>
+                <h2>Consejo Atmos</h2>
+            </div>
+            <div class="modal-body center-body">
+                <p id="joke-text" style="font-size: 1.25rem; font-weight: 500; text-align: center; color: var(--text-main); margin-bottom: 1rem;"></p>
+            </div>
+            <button class="close-modal-btn icon-btn"><span class="material-symbols-rounded">close</span></button>
+        </div>
+    </div>
+
+    <!-- QR Modal -->
+    <div id="modal-qr" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="material-symbols-rounded modal-icon blue-icon">qr_code_scanner</span>
+                <h2>Instalar en Teléfono</h2>
+            </div>
+            <div class="modal-body center-body" style="text-align: center;">
+                <p class="mb-2" style="font-weight: 600;">Escanea este código con la cámara de tu celular:</p>
+                <img src="https://imgur.com/GNzJIeY.png" alt="QR Code" style="width: 200px; height: 200px; border-radius: 12px; margin: 0 auto; display: block;">
+            </div>
+            <button class="close-modal-btn icon-btn"><span class="material-symbols-rounded">close</span></button>
+        </div>
+    </div>
+
+    <!-- Symbols Modal -->
+    <div id="modal-symbols" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="material-symbols-rounded modal-icon blue-icon">library_books</span>
+                <h2>Símbolos del Clima</h2>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <ul style="list-style: none; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; background: transparent;">
+                    <li style="display: flex; align-items: center; gap: 1rem;"><span class="material-symbols-rounded" style="color:#F9AB00; font-size: 2rem;">clear_day</span> <b>Sol:</b> Despejado y/o caluroso.</li>
+                    <li style="display: flex; align-items: center; gap: 1rem;"><span class="material-symbols-rounded" style="color:#A0C2FA; font-size: 2rem;">partly_cloudy_day</span> <b>Medio Sol:</b> Parcialmente Nublado.</li>
+                    <li style="display: flex; align-items: center; gap: 1rem;"><span class="material-symbols-rounded" style="color:#9AA0A6; font-size: 2rem;">cloud</span> <b>Nube:</b> Totalmente Nublado.</li>
+                    <li style="display: flex; align-items: center; gap: 1rem;"><span class="material-symbols-rounded" style="color:#1A73E8; font-size: 2rem;">rainy</span> <b>Lluvia:</b> Preparate para mojarte.</li>
+                    <li style="display: flex; align-items: center; gap: 1rem;"><span class="material-symbols-rounded" style="color:#F9AB00; font-size: 2rem;">thunderstorm</span> <b>Rayo:</b> Tormenta eléctrica.</li>
+                    <li style="display: flex; align-items: center; gap: 1rem;"><span class="material-symbols-rounded" style="color:#8AB4F8; font-size: 2rem;">weather_snowy</span> <b>Nieve:</b> Frío extremo.</li>
+                    <li style="display: flex; align-items: center; gap: 1rem;"><span class="material-symbols-rounded" style="color:#9AA0A6; font-size: 2rem;">foggy</span> <b>Niebla:</b> Poca visibilidad.</li>
+                </ul>
+            </div>
+            <button class="close-modal-btn icon-btn"><span class="material-symbols-rounded">close</span></button>
+        </div>
+    </div>
+
+    <!-- Install Notification -->
+    <div id="install-toast" class="install-toast">
+        <div class="install-toast-content">
+            <span class="material-symbols-rounded pink-icon" style="padding: 0.5rem; border-radius: 50%;">app_shortcut</span>
+            <p>¡Instala Atmos en tu pantalla de inicio para una mejor experiencia!</p>
+        </div>
+        <div class="install-toast-actions">
+            <button id="toast-install-btn" class="btn-primary small-btn">Instalar</button>
+            <button id="toast-close-btn" class="icon-btn small"><span class="material-symbols-rounded">close</span></button>
         </div>
     </div>
 

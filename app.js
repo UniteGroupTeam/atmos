@@ -1,6 +1,6 @@
 // --- Configuración (Google Web App) ---
 // PASO 1: Reemplaza esta URL por la URL de implementación de tu Google Web App
-const GOOGLE_APP_URL = "https://script.google.com/macros/s/AKfycbz_XXXXXXXXXXXX/exec"; 
+const GOOGLE_APP_URL = "https://script.google.com/macros/s/AKfycbyz6ImJvCx3PYuApw6GDn_3zuTeUN3-eT7F2g8JJdrZSUG9FUl4aRP0yhTmWR4f_yaFsw/exec";
 
 const UI = {
     locationName: document.getElementById('location-name'),
@@ -11,6 +11,9 @@ const UI = {
     weatherDesc: document.getElementById('weather-desc'),
     tempMin: document.getElementById('temp-min'),
     tempMax: document.getElementById('temp-max'),
+    sunriseTime: document.getElementById('sunrise-time'),
+    sunsetTime: document.getElementById('sunset-time'),
+    dayNightStatus: document.getElementById('day-night-status'),
     weatherJoke: document.getElementById('weather-joke'),
     waterJoke: document.getElementById('water-joke'),
     // AQI
@@ -36,10 +39,30 @@ const UI = {
     btnNuevaFuga: document.getElementById('btn-nueva-fuga'),
     btnFugaResuelta: document.getElementById('btn-fuga-resuelta'),
     btnEnviarFuga: document.getElementById('btn-enviar-fuga'),
+    fugaCalle: document.getElementById('fuga-calle'),
+    fugaNumero: document.getElementById('fuga-numero'),
+    fugaDelegacion: document.getElementById('fuga-delegacion'),
+    fugaCp: document.getElementById('fuga-cp'),
     fugaDescInput: document.getElementById('fuga-desc'),
     searchFugas: document.getElementById('search-fugas'),
-    resolveListContainer: document.getElementById('resolve-list-container')
+    resolveListContainer: document.getElementById('resolve-list-container'),
+    // Install Flow
+    installBtnTop: document.getElementById('install-btn-top'),
+    installToast: document.getElementById('install-toast'),
+    toastInstallBtn: document.getElementById('toast-install-btn'),
+    toastCloseBtn: document.getElementById('toast-close-btn'),
+    // Forecast & QR
+    forecastList: document.getElementById('forecast-list'),
+    desktopQrBtn: document.getElementById('desktop-qr-btn'),
+    modalQr: document.getElementById('modal-qr'),
+    modalJoke: document.getElementById('modal-joke'),
+    jokeIcon: document.getElementById('joke-icon'),
+    jokeText: document.getElementById('joke-text'),
+    btnSymbolsIndex: document.getElementById('btn-symbols-index'),
+    modalSymbols: document.getElementById('modal-symbols')
 };
+
+let deferredPrompt;
 
 let currentCoords = { lat: 19.4326, lon: -99.1332 }; // Default CDMX
 let fugasData = [];
@@ -92,7 +115,7 @@ async function fetchAPIs(lat, lon) {
     
     try {
         const [weatherRes, aqiRes] = await Promise.all([
-            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=precipitation_probability_max,temperature_2m_max,temperature_2m_min&timezone=auto`),
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,is_day&daily=weather_code,precipitation_probability_max,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto`),
             fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi`)
         ]);
 
@@ -104,6 +127,7 @@ async function fetchAPIs(lat, lon) {
         processWeather(weatherData);
         processAQI(aqiData.current.us_aqi || 0);
         processWaterRisk(weatherData.daily.precipitation_probability_max || [0]);
+        processForecast(weatherData.daily);
         
         UI.locationName.textContent = "Magia lista en tu ubicación";
 
@@ -131,6 +155,39 @@ function processWeather(data) {
     UI.weatherIcon.textContent = info.icon;
     UI.weatherIcon.style.color = info.color;
     UI.weatherIcon.style.fontVariationSettings = `'FILL' ${info.fill}`;
+    
+    // Sunrise & Sunset
+    try {
+        const sr = data.daily.sunrise[0].split('T')[1];
+        const ss = data.daily.sunset[0].split('T')[1];
+        UI.sunriseTime.textContent = sr;
+        UI.sunsetTime.textContent = ss;
+    } catch(e) { console.error("Error parsing sun times", e); }
+    
+    // Dynamic theme & Day/Night text
+    const isDay = data.current.is_day === 1;
+    UI.dayNightStatus.textContent = isDay ? "Día" : "Noche";
+    applyDynamicTheme(data.current.weather_code, isDay);
+}
+
+function applyDynamicTheme(code, isDay) {
+    document.body.className = ''; // remove all previous themes
+    
+    let themeClass = 'theme-day-clear';
+    
+    if ([0, 1, 2].includes(code)) {
+        themeClass = isDay ? 'theme-day-clear' : 'theme-night-clear';
+    } else if ([3, 45, 48].includes(code)) {
+        themeClass = isDay ? 'theme-day-cloudy' : 'theme-night-cloudy';
+    } else if ([51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99].includes(code)) {
+        themeClass = isDay ? 'theme-day-rain' : 'theme-night-rain';
+    } else if ([71,73,75,77,85,86].includes(code)) {
+        themeClass = isDay ? 'theme-day-cloudy' : 'theme-night-clear'; // Use cloudy for snow
+    } else {
+        themeClass = isDay ? 'theme-day-cloudy' : 'theme-night-cloudy';
+    }
+    
+    document.body.classList.add(themeClass);
 }
 
 function processAQI(aqi) {
@@ -175,6 +232,78 @@ function processWaterRisk(rainProbs) {
         UI.riskBadge.classList.add('bg-good');
         UI.waterJoke.textContent = "Las presas andan contentas.";
     }
+}
+
+function processForecast(daily) {
+    if (!UI.forecastList) return;
+    UI.forecastList.innerHTML = '';
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    
+    for(let i = 0; i < daily.time.length; i++) {
+        if(i > 6) break; // Maximum 7 days
+        
+        // Fix timezone issue when parsing strings YYYY-MM-DD
+        const dateObj = new Date(daily.time[i] + 'T12:00:00');
+        const dayName = i === 0 ? 'Hoy' : days[dateObj.getDay()];
+        const min = Math.round(daily.temperature_2m_min[i]);
+        const max = Math.round(daily.temperature_2m_max[i]);
+        const wCode = daily.weather_code[i];
+        
+        const info = getWeatherMapping(wCode);
+        
+        const row = document.createElement('div');
+        row.className = 'forecast-row';
+        row.innerHTML = `
+            <span class="material-symbols-rounded forecast-icon" style="color: ${info.color}">${info.icon}</span>
+            <span class="forecast-day">${dayName}</span>
+            <div class="forecast-temp">
+                <span>${min}°</span>
+                <span>/</span>
+                <span style="color: var(--text-main); font-weight: 600;">${max}°</span>
+            </div>
+        `;
+        
+        row.addEventListener('click', () => {
+            showJokeModal(wCode, min, max);
+        });
+        
+        UI.forecastList.appendChild(row);
+    }
+}
+
+function showJokeModal(code, min, max) {
+    closeAllModals();
+    
+    const wInfo = getWeatherMapping(code);
+    let jokeDesc = `<b>${wInfo.desc}:</b> ${wInfo.joke}<br><br>`;
+    let icon = wInfo.icon;
+    let colorClass = "pink-icon";
+    
+    // Add Mexican temperature slang
+    if (max >= 28) {
+        jokeDesc += "¡Además hace un calorón! 🔥 Échate una limonada bien helada o busca una sombrita.";
+        icon = "local_fire_department";
+        colorClass = "pink-icon";
+    } else if (min <= 12) {
+        jokeDesc += "¡Y hace frío loco! 🥶 Saca la cobija de tigre y llévate tu chamarra buena.";
+        icon = "ac_unit";
+        colorClass = "blue-icon";
+    } else {
+        jokeDesc += "Temperatura a toda madre 😎. Perfecto para ir por unos tacos al pastor.";
+        colorClass = "green-icon";
+    }
+    
+    // If it's raining heavily, let the rain icon override the temp icon
+    if ([51,53,55,56,57,61,63,65,66,67,71,73,75,77,80,81,82,85,86,95,96,99].includes(code)) {
+        colorClass = "blue-icon";
+        icon = wInfo.icon; // Keep the rain/snow icon
+    }
+    
+    UI.jokeIcon.textContent = icon;
+    UI.jokeIcon.className = `material-symbols-rounded modal-icon ${colorClass}`;
+    UI.jokeText.innerHTML = jokeDesc;
+    
+    UI.modalJoke.classList.add('active');
 }
 
 function initData() {
@@ -257,10 +386,23 @@ function renderResolveList() {
     activas.forEach(f => {
         const d = document.createElement('div');
         d.className = 'resolve-item';
+        d.style.display = 'flex';
+        d.style.justifyContent = 'space-between';
+        d.style.alignItems = 'center';
+        d.style.padding = '1rem';
+        d.style.marginBottom = '0.5rem';
+        d.style.background = 'rgba(255,255,255,0.05)';
+        d.style.borderRadius = 'var(--radius-sm)';
+        d.style.cursor = 'pointer';
+
         d.innerHTML = `
-            <div class="resolve-item-text">${f.desc}</div>
-            <button class="icon-btn small"><span class="material-symbols-rounded green-icon" style="color:#FFF">check</span></button>
+            <div class="resolve-item-text" style="flex: 1; color: var(--text-main); font-weight: 500;">${f.desc}</div>
+            <button class="icon-btn small" style="background: var(--good-color); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
+                <span class="material-symbols-rounded" style="color: #000; font-size: 1.2rem;">check</span>
+            </button>
         `;
+        
+        // El clic en cualquier parte del item resuelve
         d.addEventListener('click', () => markFugaResolved(f.id));
         UI.resolveListContainer.appendChild(d);
     });
@@ -281,16 +423,24 @@ async function markFugaResolved(id) {
     }
 
     try {
-        await fetch(`${GOOGLE_APP_URL}`, {
+        await fetch(GOOGLE_APP_URL, {
             method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: 'resolve', id: id })
         });
-        await fetchFugas(); // Refresh list
+        
+        // Damos un segundo de margen para que Google actualice su base de datos
+        setTimeout(() => {
+            fetchFugas(); // Refresh list
+            hideLoading();
+            alert("¡Fuga marcada como resuelta!");
+        }, 1500);
     } catch (e) {
         console.error(e);
+        hideLoading();
         alert("Falla de conexión al actualizar.");
     }
-    hideLoading();
 }
 
 // ---------------- Push Notifications Logic ---------------- //
@@ -314,13 +464,77 @@ async function requestNotificationAndSchedule() {
     }
 }
 
+// ---------------- Install PWA Logic ---------------- //
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Show top install button
+    UI.installBtnTop.style.display = 'flex';
+    
+    // Show install toast for 10 seconds if not already shown in this session
+    if (!sessionStorage.getItem('installToastShown')) {
+        UI.installToast.classList.add('active');
+        sessionStorage.setItem('installToastShown', 'true');
+        
+        setTimeout(() => {
+            UI.installToast.classList.remove('active');
+        }, 10000);
+    }
+});
+
+async function handleInstallClick() {
+    UI.installBtnTop.style.display = 'none';
+    UI.installToast.classList.remove('active');
+    
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            console.log('App install accepted');
+        } else {
+            console.log('App install declined');
+            UI.installBtnTop.style.display = 'flex';
+        }
+        deferredPrompt = null;
+    }
+}
+
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    UI.installBtnTop.style.display = 'none';
+    UI.installToast.classList.remove('active');
+});
+
+UI.installBtnTop.addEventListener('click', handleInstallClick);
+UI.toastInstallBtn.addEventListener('click', handleInstallClick);
+UI.toastCloseBtn.addEventListener('click', () => {
+    UI.installToast.classList.remove('active');
+});
+
 // ---------------- Events ---------------- //
 
 UI.refreshBtn.addEventListener('click', initData);
 
 UI.waterInfoBtn.addEventListener('click', () => {
+    closeAllModals();
     UI.modalInfo.classList.add('active');
 });
+
+if(UI.desktopQrBtn) {
+    UI.desktopQrBtn.addEventListener('click', () => {
+        closeAllModals();
+        UI.modalQr.classList.add('active');
+    });
+}
+
+if(UI.btnSymbolsIndex) {
+    UI.btnSymbolsIndex.addEventListener('click', () => {
+        closeAllModals();
+        UI.modalSymbols.classList.add('active');
+    });
+}
 
 // Boton Flotante (Reportar Fuga Main)
 UI.btnReportMain.addEventListener('click', () => {
@@ -330,7 +544,14 @@ UI.btnReportMain.addEventListener('click', () => {
 // BOTONES DE MENU REPORTE
 UI.btnNuevaFuga.addEventListener('click', () => {
     closeAllModals();
+    
+    // Limpiar los campos para el nuevo reporte
+    UI.fugaCalle.value = '';
+    UI.fugaNumero.value = '';
+    UI.fugaDelegacion.value = '';
+    UI.fugaCp.value = '';
     UI.fugaDescInput.value = '';
+    
     UI.modalNuevaFuga.classList.add('active');
 });
 
@@ -345,7 +566,15 @@ UI.searchFugas.addEventListener('input', renderResolveList);
 
 UI.btnEnviarFuga.addEventListener('click', async () => {
     const desc = UI.fugaDescInput.value.trim();
-    if(!desc) { alert("Escribe una breve descripción."); return; }
+    const calle = UI.fugaCalle.value.trim();
+    const numero = UI.fugaNumero.value.trim();
+    const delegacion = UI.fugaDelegacion.value.trim();
+    const cp = UI.fugaCp.value.trim();
+    
+    if(!desc || !calle || !numero || !delegacion) { 
+        alert("Por favor, llena los campos principales de la ubicación y la descripción."); 
+        return; 
+    }
     
     closeAllModals();
     showLoading("Guardando reporte en la base de datos...");
@@ -354,8 +583,8 @@ UI.btnEnviarFuga.addEventListener('click', async () => {
         action: 'new',
         data: {
             id: Date.now(),
-            lat: currentCoords.lat,
-            lon: currentCoords.lon,
+            lat: `${calle} #${numero}`, // Reutilizamos las columnas lat/lon del Sheets para guardar la dirección
+            lon: `${delegacion} CP: ${cp}`,
             date: new Date().toLocaleDateString('es-ES'),
             desc: desc,
             status: "activo"
@@ -375,13 +604,29 @@ UI.btnEnviarFuga.addEventListener('click', async () => {
     }
 
     try {
+        // Usamos post con fetch normal (sin no-cors primero para ver si falla, 
+        // pero Google Apps Script usualmente requiere redirección, 
+        // así que el truco es usar un formulario o Content-Type: text/plain)
         await fetch(GOOGLE_APP_URL, {
             method: 'POST',
+            mode: 'no-cors', 
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
             body: JSON.stringify(payload)
         });
-        await fetchFugas();
+        
+        // Al usar no-cors no podemos leer la respuesta, pero el envío se hace.
+        console.log("Payload enviado:", payload);
+        
+        // Damos un segundo de margen para que Google actualice
+        setTimeout(() => {
+            fetchFugas();
+        }, 1500);
+        
         hideLoading();
         requestNotificationAndSchedule();
+        alert("¡Reporte enviado exitosamente con la dirección proporcionada!");
     } catch (e) {
         console.error(e);
         hideLoading();

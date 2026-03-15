@@ -1,50 +1,28 @@
 :root {
-    /* Google Material Light Pastel Pink/Blue */
-    --bg-color: #FFF9FA; /* Muy ligero rosa/blanco */
-    --surface: #FFFFFF;
-    --surface-variant: #FDECF2; /* Rosa pálido para contenedores */
-    --primary: #D81B60; /* Rosa vibrante Bottle Code */
-    --primary-container: #FCE4EC; /* Rosa pastel Google */
-    --on-primary-container: #880E4F;
-    --secondary: #4285F4; /* Azul Google para contraste */
-    --text-main: #202124;
-    --text-sec: #5F6368;
-    --border: #F8BBD0;
+    /* Base theme inspired by modern weather apps */
+    --bg-color: #0F172A; /* Default dark blue */
+    --surface: rgba(30, 41, 59, 0.6); /* Translucent dark for glassmorphism */
+    --surface-variant: rgba(51, 65, 85, 0.8);
+    --primary: #38BDF8; /* Refreshing light blue */
+    --primary-container: rgba(56, 189, 248, 0.2);
+    --on-primary-container: #BAE6FD;
+    --secondary: #818CF8;
+    --text-main: #F8FAFC; /* White-ish text */
+    --text-sec: #CBD5E1; /* Light grey text */
+    --border: rgba(255, 255, 255, 0.1); /* Subtle border for glass effect */
     
-    --good-color: #137333;
-    --good-bg: #CEEAD6;
-    --mod-color: #B06000;
-    --mod-bg: #FEF7E0;
-    --bad-color: #B31412;
-    --bad-bg: #FAD2CF;
+    --good-color: #4ADE80;
+    --good-bg: rgba(74, 222, 128, 0.2);
+    --mod-color: #FBBF24;
+    --mod-bg: rgba(251, 191, 36, 0.2);
+    --bad-color: #F87171;
+    --bad-bg: rgba(248, 113, 113, 0.2);
 
-    --radius-sm: 12px;
-    --radius-md: 24px;
-    --radius-lg: 32px;
+    --radius-sm: 16px;
+    --radius-md: 28px;
+    --radius-lg: 36px;
     
-    font-family: 'Outfit', sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-color: #201A1C; /* Dark magenta/grey */
-        --surface: #2D2427;
-        --surface-variant: #3F3035;
-        --primary: #FFB3C7; /* Rosa suave modo oscuro */
-        --primary-container: #82003D;
-        --on-primary-container: #FFD9E3;
-        --secondary: #8AB4F8;
-        --text-main: #EFEAEC;
-        --text-sec: #BFC8CF;
-        --border: #524348;
-
-        --good-color: #81C995;
-        --good-bg: #137333;
-        --mod-color: #FDE293;
-        --mod-bg: #E37400;
-        --bad-color: #F28B82;
-        --bad-bg: #A50E0E;
-    }
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -63,7 +41,12 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+    background: transparent; /* Let body gradient show through */
     padding-bottom: 20px;
+}
+
+.desktop-only-btn {
+    display: none; /* Hidden by default, shown on desktop */
 }
 
 /* Typography elements */
@@ -145,7 +128,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding-top: 2rem;
 }
 
 .weather-main {
@@ -153,11 +138,13 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .weather-icon-large {
     font-size: 6rem;
-    color: #F9AB00; /* Default sun, changed by JS */
+    color: var(--text-main); /* Default to white for better contrast on gradients */
+    text-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .temp-display {
@@ -167,32 +154,33 @@ body {
 }
 
 #current-temp {
-    font-size: 5.5rem;
-    font-weight: 500;
+    font-size: 6rem;
+    font-weight: 400;
     line-height: 1;
-    letter-spacing: -3px;
+    letter-spacing: -2px;
     color: var(--text-main);
 }
 
 .unit {
-    font-size: 1.8rem;
-    font-weight: 500;
-    margin-top: 0.5rem;
+    font-size: 2rem;
+    font-weight: 300;
+    margin-top: 0.8rem;
     color: var(--text-sec);
-    margin-left: 0.2rem;
 }
 
 #weather-desc {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--text-sec);
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 0.5rem;
 }
 
 .weather-joke {
+    color: var(--text-sec);
+    text-align: center;
+    font-style: auto;
     font-size: 1rem;
-    font-weight: 500;
-    color: var(--primary);
-    background: var(--primary-container);
+    margin-bottom: 1rem;
     padding: 0.5rem 1rem;
     border-radius: var(--radius-sm);
     display: inline-block;
@@ -213,18 +201,94 @@ body {
     font-size: 0.8rem;
 }
 
-/* Cards */
-.cards-grid {
+.weather-details-row {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-main);
+}
+
+.detail-item .material-symbols-rounded {
+    color: var(--primary);
+    font-size: 1.8rem;
+}
+
+.detail-col {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+}
+
+.detail-col small {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    opacity: 0.7;
+    font-weight: 700;
+}
+
+.detail-col span {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.day-night-badge {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.4rem 1.2rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.8rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.day-night-badge {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+/* Cards */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+    padding: 0 1rem;
+}
+
+/* Make specific cards span full width if needed */
+.reports-card, .forecast-card {
+    grid-column: 1 / -1;
 }
 
 .card {
     background: var(--surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
     padding: 1.2rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
 }
 
 .card-header {
@@ -246,16 +310,15 @@ body {
     font-weight: 600;
 }
 
-/* AQI Content */
+/* AQI Content & Other compact cards */
 .aqi-content, .water-risk-content {
     display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-.water-risk-content {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     gap: 0.8rem;
+    text-align: center;
+    flex: 1;
 }
 
 .aqi-ring {
@@ -426,7 +489,7 @@ body {
     box-shadow: 0 4px 14px rgba(216, 27, 96, 0.4);
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
-    z-index: 20;
+    z-index: 1000; /* Ensure it's above everything */
 }
 
 .fab.extended:active {
@@ -442,12 +505,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100;
+    z-index: 2000;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s;
-    padding: 1.5rem;
-    backdrop-filter: blur(4px);
+    transition: opacity 0.3s ease;
+    padding: 1rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .modal-overlay.active {
@@ -456,13 +520,18 @@ body {
 }
 
 .modal {
-    background: var(--surface);
-    border-radius: var(--radius-md);
-    padding: 1.8rem;
-    width: 100%;
-    max-width: 380px;
-    transform: translateY(30px) scale(0.95);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    width: 90%;
+    max-width: 400px;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    position: relative;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     position: relative;
     max-height: 90vh;
@@ -472,6 +541,7 @@ body {
 
 .modal-overlay.active .modal {
     transform: translateY(0) scale(1);
+    opacity: 1;
 }
 
 .close-modal-btn {
@@ -659,4 +729,176 @@ body {
     background: transparent;
     border: none;
     box-shadow: none;
+}
+
+/* --- Install Toast --- */
+.install-toast {
+    position: fixed;
+    bottom: 6rem; /* Above FAB */
+    left: 1rem;
+    right: 1rem;
+    background: var(--surface);
+    border: 2px solid var(--primary-container);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    z-index: 1000;
+    transform: translateY(120%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+.install-toast.active {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.install-toast-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.install-toast-content p {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.4;
+}
+
+.install-toast-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.small-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    width: auto;
+}
+
+/* --- Forecast Styles --- */
+.forecast-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.forecast-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    background: var(--surface-variant);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.forecast-row:hover {
+    background: var(--border);
+}
+
+.forecast-day {
+    flex: 1;
+    font-weight: 600;
+}
+
+.forecast-temp {
+    display: flex;
+    gap: 0.8rem;
+    color: var(--text-sec);
+    font-size: 0.95rem;
+}
+
+.forecast-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-right: 0.5rem;
+}
+
+/* --- Desktop Optimization --- */
+.desktop-only-btn {
+    display: none;
+}
+
+@media (min-width: 601px) {
+    .desktop-only-btn {
+        display: flex !important;
+        margin: 1.5rem auto;
+        max-width: fit-content;
+    }
+
+    .app-container {
+        border-right: 1px solid var(--border);
+        border-left: 1px solid var(--border);
+        background: rgba(0,0,0,0.1); /* Subtle dark container */
+        box-shadow: 0 0 40px rgba(0,0,0,0.2);
+    }
+    
+    body {
+        background-color: #000;
+        background-image: 
+            radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%),
+            radial-gradient(var(--surface-variant) 1px, transparent 1px);
+        background-size: 100% 100%, 24px 24px;
+    }
+}
+
+/* --- Dynamic Weather Themes (Updated for Glassmorphism) --- */
+body {
+    transition: background 0.5s ease-in-out;
+}
+
+body.theme-day-clear {
+    background: linear-gradient(180deg, #4da4e4 0%, #7dbdec 50%, #abcfe5 100%) fixed;
+}
+body.theme-night-clear {
+    background: linear-gradient(180deg, #131B39 0%, #1A2855 50%, #293B72 100%) fixed;
+}
+body.theme-day-cloudy {
+    background: linear-gradient(180deg, #7A8998 0%, #9DAAB8 50%, #C3CED6 100%) fixed;
+}
+body.theme-night-cloudy {
+    background: linear-gradient(180deg, #1E232A 0%, #2A313C 50%, #3B4653 100%) fixed;
+}
+body.theme-day-rain {
+    background: linear-gradient(180deg, #536473 0%, #718394 50%, #8D9FA8 100%) fixed;
+}
+body.theme-night-rain {
+    background: linear-gradient(180deg, #0F161E 0%, #17212D 50%, #212F3D 100%) fixed;
+}
+
+/* Rain Animation Effect */
+@keyframes rainDrop {
+    0% { background-position: 0 0; }
+    100% { background-position: 10px 100vh; }
+}
+
+body.theme-day-rain::before,
+body.theme-night-rain::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 100%);
+    background-size: 2px 20px;
+    background-repeat: repeat;
+    animation: rainDrop 0.8s linear infinite;
+}
+
+body.theme-night-rain::before {
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(100,150,200,0.3) 100%);
+}
+
+.app-container, .modal-overlay {
+    z-index: 1; /* Above the rain effect */
 }
