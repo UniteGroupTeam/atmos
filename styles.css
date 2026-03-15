@@ -82,8 +82,18 @@ body {
 
 #location-name {
     font-size: 1.1rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Constraint for mobile */
+}
+
+@media (min-width: 400px) {
+    #location-name {
+        max-width: 250px;
+    }
 }
 
 .icon-btn {

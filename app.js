@@ -60,7 +60,7 @@ const UI = {
     jokeText: document.getElementById('joke-text'),
     btnSymbolsIndex: document.getElementById('btn-symbols-index'),
     modalSymbols: document.getElementById('modal-symbols'),
-    modalIosInstall: document.getElementById('modal-ios-install')
+    modalInstallGuide: document.getElementById('modal-install-guide')
 };
 
 let deferredPrompt;
@@ -467,17 +467,9 @@ async function requestNotificationAndSchedule() {
 
 // ---------------- Install PWA Logic ---------------- //
 
-// iOS Detection
-const isIOS = () => {
-    return [
-        'iPad Simulator',
-        'iPhone Simulator',
-        'iPod Simulator',
-        'iPad',
-        'iPhone',
-        'iPod'
-    ].includes(navigator.platform)
-    || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+// Mobile Detection (Any mobile)
+const isMobile = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 };
 
 // PWA Standalone Detection
@@ -492,15 +484,15 @@ function setupInstallUI() {
         return;
     }
 
-    if (isIOS()) {
-        // iOS doesn't fire beforeinstallprompt, so we show the button manually
+    // Force show install button on all mobile devices if not already installed
+    if (isMobile()) {
         UI.installBtnTop.style.display = 'flex';
         
         if (!sessionStorage.getItem('installToastShown')) {
             setTimeout(() => {
                 UI.installToast.classList.add('active');
                 sessionStorage.setItem('installToastShown', 'true');
-            }, 3000); // Wait 3s to not overwhelm
+            }, 3000);
         }
     }
 }
@@ -509,10 +501,9 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     
-    // Show top install button (Android/PC)
+    // For PC or Androids that fire the event
     UI.installBtnTop.style.display = 'flex';
     
-    // Show install toast if not already shown in this session
     if (!sessionStorage.getItem('installToastShown')) {
         setTimeout(() => {
             UI.installToast.classList.add('active');
@@ -523,7 +514,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 async function handleInstallClick() {
     if (deferredPrompt) {
-        // For browsers with native prompt (Android/Chrome)
         UI.installBtnTop.style.display = 'none';
         UI.installToast.classList.remove('active');
         
@@ -533,10 +523,10 @@ async function handleInstallClick() {
             UI.installBtnTop.style.display = 'flex';
         }
         deferredPrompt = null;
-    } else if (isIOS()) {
-        // For iOS, show instructions
+    } else {
+        // Fallback for any device where native prompt wasn't captured (iOS or restricted Android)
         closeAllModals();
-        UI.modalIosInstall.classList.add('active');
+        UI.modalInstallGuide.classList.add('active');
         UI.installToast.classList.remove('active');
     }
 }

@@ -345,20 +345,31 @@
         </div>
     </div>
 
-    <!-- iOS Install Instructions -->
-    <div id="modal-ios-install" class="modal-overlay">
+    <!-- Generic Mobile Install Guide -->
+    <div id="modal-install-guide" class="modal-overlay">
         <div class="modal">
             <div class="modal-header">
-                <span class="material-symbols-rounded modal-icon blue-icon">ios_share</span>
-                <h2>Instalar en iPhone</h2>
+                <span class="material-symbols-rounded modal-icon blue-icon">add_to_home_screen</span>
+                <h2>Instalar Atmos</h2>
             </div>
             <div class="modal-body">
-                <p>Para instalar <b>Atmos</b> en tu iPhone o iPad, sigue estos pasos:</p>
-                <ol style="padding-left: 1.5rem; margin-top: 1rem; color: var(--text-main);">
-                    <li style="margin-bottom: 0.8rem;">Toca el icono de <b>Compartir</b> <span class="material-symbols-rounded" style="vertical-align: middle; font-size: 1.2rem;">ios_share</span> en la barra inferior del navegador.</li>
-                    <li style="margin-bottom: 0.8rem;">Desliza hacia abajo y selecciona <b>"Agregar a inicio"</b> <span class="material-symbols-rounded" style="vertical-align: middle; font-size: 1.2rem;">add_box</span>.</li>
-                    <li>¡Listo! Ya puedes abrir Atmos como una App nativa.</li>
-                </ol>
+                <p>Para tener Atmos en tu pantalla de inicio como una App:</p>
+                
+                <div style="margin-top: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+                    <p style="color: var(--primary); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">EN ANDROID (Chrome):</p>
+                    <ol style="padding-left: 1.5rem; color: var(--text-main);">
+                        <li>Toca los <b>tres puntos</b> <span class="material-symbols-rounded" style="vertical-align: middle; font-size: 1.2rem;">more_vert</span> arriba a la derecha.</li>
+                        <li>Selecciona <b>"Instalar aplicación"</b> o <b>"Agregar a inicio"</b>.</li>
+                    </ol>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <p style="color: var(--secondary); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">EN iPHONE (Safari):</p>
+                    <ol style="padding-left: 1.5rem; color: var(--text-main);">
+                        <li>Toca el icono de <b>Compartir</b> <span class="material-symbols-rounded" style="vertical-align: middle; font-size: 1.2rem;">ios_share</span> abajo.</li>
+                        <li>Busca y toca en <b>"Agregar a inicio"</b> <span class="material-symbols-rounded" style="vertical-align: middle; font-size: 1.2rem;">add_box</span>.</li>
+                    </ol>
+                </div>
             </div>
             <button class="close-modal-btn icon-btn"><span class="material-symbols-rounded">close</span></button>
         </div>
