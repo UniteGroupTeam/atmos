@@ -3,8 +3,8 @@
   "short_name": "Atmos",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#FCE4EC",
-  "theme_color": "#D81B60",
+  "background_color": "#0F172A",
+  "theme_color": "#38BDF8",
   "description": "App del Clima y Riesgo de Agua",
   "gcm_sender_id": "103953800507",
   "permissions": [

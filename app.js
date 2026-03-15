@@ -59,7 +59,8 @@ const UI = {
     jokeIcon: document.getElementById('joke-icon'),
     jokeText: document.getElementById('joke-text'),
     btnSymbolsIndex: document.getElementById('btn-symbols-index'),
-    modalSymbols: document.getElementById('modal-symbols')
+    modalSymbols: document.getElementById('modal-symbols'),
+    modalIosInstall: document.getElementById('modal-ios-install')
 };
 
 let deferredPrompt;
@@ -466,38 +467,77 @@ async function requestNotificationAndSchedule() {
 
 // ---------------- Install PWA Logic ---------------- //
 
+// iOS Detection
+const isIOS = () => {
+    return [
+        'iPad Simulator',
+        'iPhone Simulator',
+        'iPod Simulator',
+        'iPad',
+        'iPhone',
+        'iPod'
+    ].includes(navigator.platform)
+    || (navigator.userAgent.includes("Mac") && "ontouchend" in document);
+};
+
+// PWA Standalone Detection
+const isStandalone = () => {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+};
+
+// Initial Install UI Setup
+function setupInstallUI() {
+    if (isStandalone()) {
+        UI.installBtnTop.style.display = 'none';
+        return;
+    }
+
+    if (isIOS()) {
+        // iOS doesn't fire beforeinstallprompt, so we show the button manually
+        UI.installBtnTop.style.display = 'flex';
+        
+        if (!sessionStorage.getItem('installToastShown')) {
+            setTimeout(() => {
+                UI.installToast.classList.add('active');
+                sessionStorage.setItem('installToastShown', 'true');
+            }, 3000); // Wait 3s to not overwhelm
+        }
+    }
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     
-    // Show top install button
+    // Show top install button (Android/PC)
     UI.installBtnTop.style.display = 'flex';
     
-    // Show install toast for 10 seconds if not already shown in this session
+    // Show install toast if not already shown in this session
     if (!sessionStorage.getItem('installToastShown')) {
-        UI.installToast.classList.add('active');
-        sessionStorage.setItem('installToastShown', 'true');
-        
         setTimeout(() => {
-            UI.installToast.classList.remove('active');
-        }, 10000);
+            UI.installToast.classList.add('active');
+            sessionStorage.setItem('installToastShown', 'true');
+        }, 3000);
     }
 });
 
 async function handleInstallClick() {
-    UI.installBtnTop.style.display = 'none';
-    UI.installToast.classList.remove('active');
-    
     if (deferredPrompt) {
+        // For browsers with native prompt (Android/Chrome)
+        UI.installBtnTop.style.display = 'none';
+        UI.installToast.classList.remove('active');
+        
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            console.log('App install accepted');
-        } else {
-            console.log('App install declined');
+        if (outcome !== 'accepted') {
             UI.installBtnTop.style.display = 'flex';
         }
         deferredPrompt = null;
+    } else if (isIOS()) {
+        // For iOS, show instructions
+        closeAllModals();
+        UI.modalIosInstall.classList.add('active');
+        UI.installToast.classList.remove('active');
     }
 }
 
@@ -636,6 +676,7 @@ UI.btnEnviarFuga.addEventListener('click', async () => {
 
 // Run
 initData();
+setupInstallUI();
 
 // PWA Service Worker Registration
 if ('serviceWorker' in navigator) {

@@ -32,9 +32,9 @@
                 <span class="material-symbols-rounded" style="color:var(--primary)">location_on</span>
                 <h1 id="location-name">Buscando...</h1>
             </div>
-            <div style="display: flex; gap: 0.5rem;">
-                <button id="install-btn-top" class="icon-btn" aria-label="Instalar App" style="display: none; color: var(--primary);">
-                    <span class="material-symbols-rounded">download</span>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button id="install-btn-top" class="btn-primary" style="display: none; padding: 0.5rem 1rem; font-size: 0.85rem; width: auto; height: 36px; border-radius: 20px;">
+                    <span class="material-symbols-rounded" style="font-size: 1.2rem;">download</span> Instalar
                 </button>
                 <button id="refresh-btn" class="icon-btn" aria-label="Actualizar">
                     <span class="material-symbols-rounded">refresh</span>
@@ -342,6 +342,25 @@
         <div class="install-toast-actions">
             <button id="toast-install-btn" class="btn-primary small-btn">Instalar</button>
             <button id="toast-close-btn" class="icon-btn small"><span class="material-symbols-rounded">close</span></button>
+        </div>
+    </div>
+
+    <!-- iOS Install Instructions -->
+    <div id="modal-ios-install" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="material-symbols-rounded modal-icon blue-icon">ios_share</span>
+                <h2>Instalar en iPhone</h2>
+            </div>
+            <div class="modal-body">
+                <p>Para instalar <b>Atmos</b> en tu iPhone o iPad, sigue estos pasos:</p>
+                <ol style="padding-left: 1.5rem; margin-top: 1rem; color: var(--text-main);">
+                    <li style="margin-bottom: 0.8rem;">Toca el icono de <b>Compartir</b> <span class="material-symbols-rounded" style="vertical-align: middle; font-size: 1.2rem;">ios_share</span> en la barra inferior del navegador.</li>
+                    <li style="margin-bottom: 0.8rem;">Desliza hacia abajo y selecciona <b>"Agregar a inicio"</b> <span class="material-symbols-rounded" style="vertical-align: middle; font-size: 1.2rem;">add_box</span>.</li>
+                    <li>¡Listo! Ya puedes abrir Atmos como una App nativa.</li>
+                </ol>
+            </div>
+            <button class="close-modal-btn icon-btn"><span class="material-symbols-rounded">close</span></button>
         </div>
     </div>
 
