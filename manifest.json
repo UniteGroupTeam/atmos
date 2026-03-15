@@ -1,16 +1,23 @@
 {
-  "name": "Atmos",
+  "name": "Atmos Clima",
   "short_name": "Atmos",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#00FFE5",
-  "description": "Cyberpunk Air Quality and Water Cut Risk Monitor",
+  "background_color": "#FCE4EC",
+  "theme_color": "#D81B60",
+  "description": "App del Clima y Riesgo de Agua",
+  "gcm_sender_id": "103953800507",
+  "permissions": [
+    "geolocation",
+    "notifications",
+    "push"
+  ],
   "icons": [
     {
       "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }

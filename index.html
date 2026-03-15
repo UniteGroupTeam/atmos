@@ -2,55 +2,207 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atmos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atmos Clima</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
-    <meta name="theme-color" content="#00FFE5">
+    <meta name="theme-color" content="#FCE4EC">
     <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <!-- Google Fonts: Outfit and Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>// ATMOS_SYS</h1>
-            <p class="status">INICIALIZANDO...</p>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="location-info">
+                <span class="material-symbols-rounded" style="color:var(--primary)">location_on</span>
+                <h1 id="location-name">Buscando...</h1>
+            </div>
+            <button id="refresh-btn" class="icon-btn" aria-label="Actualizar">
+                <span class="material-symbols-rounded">refresh</span>
+            </button>
         </header>
 
-        <main>
-            <section class="aqi-section">
-                <h2>[ ÍNDICE DE CALIDAD DEL AIRE ]</h2>
-                <div class="aqi-display">
-                    <svg class="progress-ring" width="200" height="200">
-                        <circle class="progress-ring__circle_bg" stroke="rgba(0, 255, 229, 0.1)" stroke-width="10" fill="transparent" r="90" cx="100" cy="100"/>
-                        <circle class="progress-ring__circle" stroke="#00FFE5" stroke-width="10" stroke-linecap="round" fill="transparent" r="90" cx="100" cy="100"/>
-                    </svg>
-                    <div class="aqi-value-container">
-                        <span id="aqi-value">--</span>
-                        <span id="aqi-label">US AQI</span>
+        <main class="content-scroll">
+            <!-- Current Weather Section -->
+            <section class="hero-weather">
+                <div class="weather-main">
+                    <span id="weather-icon" class="material-symbols-rounded weather-icon-large">routine</span>
+                    <div class="temp-display">
+                        <span id="current-temp">--</span><span class="unit">°C</span>
                     </div>
                 </div>
-                <p id="aqi-description" class="sub-text">Buscando señal...</p>
-            </section>
-
-            <section class="water-section">
-                <h2>[ RIESGO CORTE DE AGUA ]</h2>
-                <div class="water-data">
-                    <div class="glitch-wrapper">
-                        <span id="water-risk" class="glitch" data-text="--">--</span>
-                    </div>
-                    <p id="rain-probability">Prob. media lluvia 7 días: --%</p>
+                <h2 id="weather-desc">Cargando la magia...</h2>
+                <p id="weather-joke" class="weather-joke">Alistando los sensores divertidos...</p>
+                <div class="high-low">
+                    <span>Mín: <span id="temp-min">--</span>°</span>
+                    <span class="dot-separator">•</span>
+                    <span>Máx: <span id="temp-max">--</span>°</span>
                 </div>
             </section>
 
-            <button id="btn-report" class="cyber-btn">
-                <span class="btn-text">REPORTAR FUGA</span>
-            </button>
+            <!-- Cards Container -->
+            <div class="cards-grid">
+                <!-- AQI Card -->
+                <article class="card aqi-card">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <span class="material-symbols-rounded" style="color: var(--primary)">air</span>
+                            <h3>Calidad del Aire</h3>
+                        </div>
+                    </div>
+                    <div class="aqi-content">
+                        <div class="aqi-ring" id="aqi-ring">
+                            <span id="aqi-value" class="aqi-number">--</span>
+                        </div>
+                        <div class="aqi-info">
+                            <p id="aqi-status" class="status-text">--</p>
+                            <p class="subtitle">Índice US AQI</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Water Risk Card -->
+                <article class="card water-risk-card">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <span class="material-symbols-rounded" style="color: #4285F4">water_drop</span>
+                            <h3>Cortes de Agua</h3>
+                        </div>
+                        <button id="water-info-btn" class="icon-btn small" aria-label="Información sobre cortes de agua">
+                            <span class="material-symbols-rounded">info</span>
+                        </button>
+                    </div>
+                    <div class="water-risk-content">
+                        <div class="risk-badge" id="risk-badge">--</div>
+                        <p id="rain-probability">Prob. de lluvia (7 días): --%</p>
+                        <p id="water-joke" class="subtitle">Calculando las nubes...</p>
+                    </div>
+                </article>
+
+                <!-- Active Reports List -->
+                <article class="card reports-card">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <span class="material-symbols-rounded" style="color: var(--mod-color)">warning</span>
+                            <h3>Fugas Activas (Comunidad)</h3>
+                        </div>
+                    </div>
+                    <div class="reports-content" id="reports-list">
+                        <div class="loading-container">
+                            <div class="radar-spinner"></div>
+                            <p>Olfateando fugas cercanas...</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <footer class="app-footer">
+                <img src="https://imgur.com/dC5H3Z2.png" alt="Bottle Code Logo" class="brand-logo">
+                <p>Desarrollado con ♥ por <b>Bottle Code</b></p>
+                <p class="subtitle_footer">Empresa 100% Mexicana 🇲🇽</p>
+            </footer>
         </main>
-        
-        <footer>
-            <p>CONECTADO A OPEN-METEO API</p>
-        </footer>
+
+        <!-- Floating Action Button -->
+        <button id="btn-report-main" class="fab extended">
+            <span class="material-symbols-rounded">campaign</span>
+            Reportar Fuga
+        </button>
     </div>
+
+    <!-- Modals -->
+    
+    <!-- Menu Fugas -->
+    <div id="modal-report-menu" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="material-symbols-rounded modal-icon pink-icon">plumbing</span>
+                <h2>Gestión de Fugas</h2>
+            </div>
+            <div class="modal-body center-body">
+                <button id="btn-nueva-fuga" class="btn-primary mb-2">
+                    <span class="material-symbols-rounded">add_circle</span> Nueva Fuga
+                </button>
+                <button id="btn-fuga-resuelta" class="btn-secondary">
+                    <span class="material-symbols-rounded">check_circle</span> Fuga Resuelta
+                </button>
+            </div>
+            <button class="close-modal-btn icon-btn"><span class="material-symbols-rounded">close</span></button>
+        </div>
+    </div>
+
+    <!-- Nueva Fuga -->
+    <div id="modal-nueva-fuga" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="material-symbols-rounded modal-icon blue-icon">water_drop</span>
+                <h2>Reportar Nueva Fuga</h2>
+            </div>
+            <div class="modal-body">
+                <p class="subtitle mb-2">La app tomará tu ubicación actual de forma automática.</p>
+                <div class="input-group">
+                    <label>Descripción de la fuga:</label>
+                    <textarea id="fuga-desc" placeholder="Ej. Un tubo roto en la esquina..." rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-enviar-fuga" class="btn-primary">Enviar Reporte</button>
+            </div>
+            <button class="close-modal-btn icon-btn"><span class="material-symbols-rounded">close</span></button>
+        </div>
+    </div>
+
+    <!-- Resolver Fuga -->
+    <div id="modal-resolver-fuga" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="material-symbols-rounded modal-icon green-icon">build</span>
+                <h2>Resolver Fugas</h2>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <input type="text" id="search-fugas" placeholder="Buscar reporte...">
+                </div>
+                <div id="resolve-list-container" class="resolve-list">
+                    <!-- Fugas iteradas aquí -->
+                </div>
+            </div>
+            <button class="close-modal-btn icon-btn"><span class="material-symbols-rounded">close</span></button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="modal-loading" class="modal-overlay overlay-opaque">
+        <div class="loading-container modal-loading-content">
+            <div class="radar-spinner big-radar"></div>
+            <h2 id="loading-text">Conectando con la matriz...</h2>
+        </div>
+    </div>
+
+    <!-- Water Info -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="material-symbols-rounded modal-icon blue-icon">help</span>
+                <h2>¿Riesgo de Corte?</h2>
+            </div>
+            <div class="modal-body">
+                <p>Calculamos la magia de la lluvia para saber si nos cortarán el agua.</p>
+                <ul>
+                    <li><span class="dot low"></span> <b>Bajo:</b> Lluvias salvadoras.</li>
+                    <li><span class="dot med"></span> <b>Moderado:</b> Hay que cuidar cada gota.</li>
+                    <li><span class="dot high"></span> <b>Alto:</b> ¡Baños de 3 minutos, soldado!</li>
+                </ul>
+            </div>
+            <button class="close-modal-btn icon-btn"><span class="material-symbols-rounded">close</span></button>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
