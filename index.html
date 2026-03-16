@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Atmos Clima</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
@@ -32,9 +32,9 @@
                 <span class="material-symbols-rounded" style="color:var(--primary)">location_on</span>
                 <h1 id="location-name">Buscando...</h1>
             </div>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <button id="install-btn-top" class="btn-primary" style="display: none; padding: 0.5rem 1rem; font-size: 0.85rem; width: auto; height: 36px; border-radius: 20px;">
-                    <span class="material-symbols-rounded" style="font-size: 1.2rem;">download</span> Instalar
+            <div class="header-actions">
+                <button id="install-btn-top" class="btn-primary install-btn-compact" style="display: none;">
+                    <span class="material-symbols-rounded">download</span> Instalar
                 </button>
                 <button id="refresh-btn" class="icon-btn" aria-label="Actualizar">
                     <span class="material-symbols-rounded">refresh</span>
@@ -204,22 +204,22 @@
             </div>
             <div class="modal-body">
                 <p class="subtitle mb-2">Ingresa los datos exactos del domicilio donde se encuentra el problema.</p>
-                <div style="display: flex; gap: 0.5rem; width: 100%;">
-                    <div class="input-group" style="flex: 2;">
+                <div class="input-row">
+                    <div class="input-group">
                         <label>Calle:</label>
                         <input type="text" id="fuga-calle" placeholder="Nombre de la calle" required>
                     </div>
-                    <div class="input-group" style="flex: 1;">
+                    <div class="input-group compact">
                         <label>Núm:</label>
                         <input type="text" id="fuga-numero" placeholder="# Ext/Int" required>
                     </div>
                 </div>
-                <div style="display: flex; gap: 0.5rem; width: 100%;">
-                    <div class="input-group" style="flex: 1;">
+                <div class="input-row">
+                    <div class="input-group">
                         <label>Delegación/Municipio:</label>
                         <input type="text" id="fuga-delegacion" placeholder="Ej. Cuauhtémoc" required>
                     </div>
-                    <div class="input-group" style="flex: 1;">
+                    <div class="input-group compact">
                         <label>C.P.:</label>
                         <input type="text" id="fuga-cp" placeholder="00000" inputmode="numeric">
                     </div>

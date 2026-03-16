@@ -77,8 +77,11 @@ body {
     padding: calc(1.5rem + var(--safe-top)) calc(1.5rem + var(--safe-right)) 1rem calc(1.5rem + var(--safe-left));
     position: sticky;
     top: 0;
-    background: var(--bg-color);
-    z-index: 10;
+    background: rgba(15, 23, 42, 0.7); /* Slightly translucent */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
 }
 
 .location-info {
@@ -94,12 +97,12 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 150px; /* Constraint for mobile */
+    max-width: 50vw; /* Increased for better visibility on wide/large phones */
 }
 
-@media (min-width: 400px) {
+@media (min-width: 601px) {
     #location-name {
-        max-width: 250px;
+        max-width: 350px;
     }
 }
 
@@ -127,6 +130,24 @@ body {
 .icon-btn.small .material-symbols-rounded {
     font-size: 1.2rem;
     color: var(--text-sec);
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.install-btn-compact {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+    width: auto !important;
+    height: 36px !important;
+    border-radius: 20px !important;
+}
+
+.install-btn-compact .material-symbols-rounded {
+    font-size: 1.1rem !important;
 }
 
 /* Main Content */
@@ -186,8 +207,8 @@ body {
 }
 
 #weather-desc {
-    font-size: 1.5rem;
-    font-weight: 500;
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+    font-weight: 600;
     text-align: center;
     margin-bottom: 0.5rem;
 }
@@ -209,7 +230,7 @@ body {
     align-items: center;
     gap: 0.8rem;
     color: var(--text-sec);
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 4vw, 1.2rem);
     font-weight: 500;
     margin-top: 0.5rem;
 }
@@ -257,31 +278,18 @@ body {
 }
 
 .day-night-badge {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0.4rem 1.2rem;
+    padding: 0.45rem 1.2rem;
     border-radius: 100px;
     font-size: 0.85rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.day-night-badge {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0.4rem 1rem;
-    border-radius: 100px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 0.5rem;
 }
 
 /* Cards */
@@ -688,6 +696,26 @@ body {
 }
 .input-group textarea:focus, .input-group input:focus {
     border-color: var(--primary);
+}
+
+.input-row {
+    display: flex;
+    gap: 0.8rem;
+    width: 100%;
+}
+
+.input-row .input-group {
+    flex: 2;
+}
+
+.input-row .input-group.compact {
+    flex: 1;
+}
+
+@media (max-width: 350px) {
+    .input-row {
+        flex-direction: column;
+    }
 }
 
 /* Resolve List List inside modal */
