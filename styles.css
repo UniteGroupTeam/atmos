@@ -21,6 +21,12 @@
     --radius-sm: 16px;
     --radius-md: 28px;
     --radius-lg: 36px;
+
+    /* Responsive Spacing & Sizing */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
     
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
 }
@@ -38,11 +44,12 @@ body {
     max-width: 600px;
     margin: 0 auto;
     min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
     display: flex;
     flex-direction: column;
     position: relative;
-    background: transparent; /* Let body gradient show through */
-    padding-bottom: 20px;
+    background: transparent;
+    padding-bottom: calc(20px + var(--safe-bottom));
 }
 
 .desktop-only-btn {
@@ -67,7 +74,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
+    padding: calc(1.5rem + var(--safe-top)) calc(1.5rem + var(--safe-right)) 1rem calc(1.5rem + var(--safe-left));
     position: sticky;
     top: 0;
     background: var(--bg-color);
@@ -125,7 +132,7 @@ body {
 /* Main Content */
 .content-scroll {
     flex: 1;
-    padding: 0 1.5rem 6.5rem; /* Extra padding bottom for FAB */
+    padding: 0 calc(1.5rem + var(--safe-right)) calc(7rem + var(--safe-bottom)) calc(1.5rem + var(--safe-left));
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -152,9 +159,9 @@ body {
 }
 
 .weather-icon-large {
-    font-size: 6rem;
-    color: var(--text-main); /* Default to white for better contrast on gradients */
-    text-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-size: clamp(5rem, 20vw, 7.5rem);
+    color: var(--text-main); 
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .temp-display {
@@ -164,15 +171,15 @@ body {
 }
 
 #current-temp {
-    font-size: 6rem;
+    font-size: clamp(5.5rem, 22vw, 8.5rem);
     font-weight: 400;
-    line-height: 1;
-    letter-spacing: -2px;
+    line-height: 0.9;
+    letter-spacing: -3px;
     color: var(--text-main);
 }
 
 .unit {
-    font-size: 2rem;
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
     font-weight: 300;
     margin-top: 0.8rem;
     color: var(--text-sec);
@@ -280,9 +287,9 @@ body {
 /* Cards */
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    padding: 0 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.2rem;
+    padding: 0;
 }
 
 /* Make specific cards span full width if needed */
@@ -482,24 +489,25 @@ body {
 /* FAB */
 .fab.extended {
     position: fixed;
-    bottom: 2rem;
-    right: 50%;
-    transform: translateX(50%);
+    bottom: calc(2.2rem + var(--safe-bottom));
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: 0.6rem;
     background: var(--primary);
     color: #FFFFFF;
     border: none;
-    padding: 1rem 1.8rem;
+    padding: 1.1rem 2rem;
     border-radius: 100px;
     font-family: inherit;
     font-size: 1.05rem;
     font-weight: 700;
-    box-shadow: 0 4px 14px rgba(216, 27, 96, 0.4);
+    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
-    z-index: 1000; /* Ensure it's above everything */
+    z-index: 1000;
+    white-space: nowrap;
 }
 
 .fab.extended:active {
@@ -744,24 +752,26 @@ body {
 /* --- Install Toast --- */
 .install-toast {
     position: fixed;
-    bottom: 2rem;
+    bottom: calc(2rem + var(--safe-bottom));
     left: 1.5rem;
     right: 1.5rem;
-    background: rgba(30, 41, 59, 0.9);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 1.2rem;
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     z-index: 3000;
     transform: translateY(150%);
     opacity: 0;
     transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
     pointer-events: none;
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 .install-toast.active {
